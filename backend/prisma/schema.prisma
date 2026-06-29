@@ -1,0 +1,88 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String        @id @default(uuid())
+  email            String        @unique
+  password         String
+  name             String
+  avatarUrl        String?
+  rating           Float         @default(5.0)
+  bio              String?
+  interests        String[]      @default([])
+  instagram        String?
+  telegram         String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  tasksCreated     Task[]        @relation("UserTasks")
+  sessionsAsClient TaskSession[] @relation("ClientSessions")
+  sessionsAsHelper TaskSession[] @relation("HelperSessions")
+}
+
+model Task {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  price       Float         @default(0.0)
+  isPaid      Boolean       @default(false)
+  status      TaskStatus    @default(OPEN)
+  latitude    Float
+  longitude   Float
+  creatorId   String
+  creator     User          @relation("UserTasks", fields: [creatorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  sessions    TaskSession[]
+}
+
+model TaskSession {
+  id            String        @id @default(uuid())
+  taskId        String
+  task          Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  clientId      String
+  client        User          @relation("ClientSessions", fields: [clientId], references: [id])
+  helperId      String
+  helper        User          @relation("HelperSessions", fields: [helperId], references: [id])
+  status        SessionStatus @default(INITIATED)
+  paymentStatus PaymentStatus @default(UNPAID)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  messages      Message[]
+}
+
+model Message {
+  id        String      @id @default(uuid())
+  sessionId String
+  session   TaskSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  senderId  String
+  content   String
+  imageUrl  String?
+  createdAt DateTime    @default(now())
+}
+
+enum TaskStatus {
+  OPEN
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum SessionStatus {
+  INITIATED
+  JOINED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+}
