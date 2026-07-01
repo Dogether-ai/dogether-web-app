@@ -22,6 +22,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/sessions', sessionRoutes);
 
+// Root Route
+app.get('/', (req: Request, res: Response) => {
+  res.send('Backend is running 🚀');
+});
+
 // Health Check
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({
