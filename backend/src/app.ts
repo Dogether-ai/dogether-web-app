@@ -28,12 +28,25 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Health Check
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
+app.get('/health', async (req: Request, res: Response) => {
+  try {
+    // Test database connection
+    await prisma.user.findFirst();
+    res.status(200).json({
+      status: 'ok',
+      database: 'connected',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      status: 'error',
+      database: 'failed to connect',
+      error: error.message,
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  }
 });
 
 export default app;
