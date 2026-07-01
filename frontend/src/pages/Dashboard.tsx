@@ -1389,7 +1389,6 @@ export const Dashboard = () => {
                                 {completedSessions.map((session) => {
                                   const isClient = user?.id === session.clientId;
                                   const otherUser = isClient ? session.helper : session.client;
-                                  const activeLabel = isClient ? 'Helper' : 'Creator';
                                   
                                   return (
                                     <div 
@@ -1459,7 +1458,7 @@ export const Dashboard = () => {
             {selectedTask.creatorAvatar ? (
               <img src={selectedTask.creatorAvatar} alt={selectedTask.creatorName} style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid var(--primary)' }} />
             ) : (
-              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)', display: 'flex', alignItems: 'center', justifycontent: 'center', fontWeight: 'bold', fontSize: '18px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '18px', color: 'white' }}>
                 {selectedTask.creatorName.charAt(0).toUpperCase()}
               </div>
             )}
